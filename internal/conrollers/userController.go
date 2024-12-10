@@ -15,7 +15,7 @@ func SignUp(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	if c.Bind(&body) == nil {
+	if err := c.Bind(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to read body"})
 		return
 	}
@@ -50,5 +50,6 @@ func SignUp(c *gin.Context) {
 	user.RefreshToken = hashRefresh
 	configs.DB.Save(&user)
 
-	c.SetCookie("access_token", tokenString, 3600, "/", "", true, true)
+	c.SetCookie("access_token", tokenString, 3600, "/", "", true, false)
+	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
 }

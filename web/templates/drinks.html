@@ -129,6 +129,10 @@
             margin-top: 10px;
         }
     </style>
+
+    <!-- Подключаем библиотеку js-cookie -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+
 </head>
 <body>
 
@@ -174,13 +178,10 @@
             button.textContent = "Заказать";
             button.disabled = true;
 
-            // Enable button only if user has access token
-            const token = document.cookie.match(/accessToken=([^;]+)/);
+            const token = Cookies.get("access_token");
             if (token) {
                 button.disabled = false;
-                button.addEventListener("click", () => {
-                    alert(`Вы заказали: ${drink.title_d}`);
-                });
+                button.addEventListener("click", () => orderDrink(drink.id));
             } else {
                 const warning = document.createElement("div");
                 warning.className = "warning";
@@ -196,7 +197,39 @@
         });
     }
 
-    // Fetch drinks on page load
+    async function orderDrink(drinkId) {
+        const token = Cookies.get("access_token");
+
+        if (!token) {
+            alert("Пожалуйста, войдите в систему, чтобы сделать заказ.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    drinkId: drinkId
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Вы заказали: ${data.drink.title_d}`);
+
+                fetchDrinks();
+            } else {
+                alert("Не удалось сделать заказ.");
+            }
+        } catch (error) {
+            console.error("Ошибка при заказе:", error);
+        }
+    }
+
     fetchDrinks();
 </script>
 

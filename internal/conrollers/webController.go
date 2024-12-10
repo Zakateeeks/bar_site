@@ -16,3 +16,9 @@ func LookDrinks(c *gin.Context) {
 		"title": "Choose your drink",
 	})
 }
+
+func Registration(c *gin.Context) {
+	c.HTML(http.StatusOK, "signup.html", gin.H{
+		"title": "Sign up",
+	})
+}

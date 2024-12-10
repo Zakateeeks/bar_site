@@ -8,4 +8,5 @@ import (
 func RegisterWebRoutes(router *gin.Engine) {
 	router.GET("/", conrollers.HomePage)
 	router.GET("/drinks", conrollers.LookDrinks)
+	router.GET("/signup", conrollers.Registration)
 }

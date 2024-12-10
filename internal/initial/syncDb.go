@@ -7,7 +7,10 @@ import (
 
 // SyncDatabase Функция для автомаической миграции данных
 func SyncDatabase() {
-	err := configs.DB.AutoMigrate(&models.DrinkModel{})
+	err := configs.DB.AutoMigrate(
+		models.DrinkModel{},
+		models.User{},
+	)
 	if err != nil {
 		panic("failed to migrate db")
 		return
