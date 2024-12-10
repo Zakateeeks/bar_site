@@ -6,9 +6,13 @@ import (
 
 type DrinkModel struct {
 	gorm.Model
-	Title string     `json:"title" gorm:"not null"`
-	Type  TypeDrink  `json:"type" gorm:"foreignKey:TypeID"`
-	Brand BrandDrink `json:"brand" gorm:"foreignKey:BrandID"`
-	Count int        `json:"count" gorm:"not null"`
-	Image string     `json:"image" gorm:"not null"`
+	TitleD string `json:"title_d" gorm:"not null"`
+	Type   string `json:"type" gorm:"foreignKey:TypeID"`
+	Brand  string `json:"brand" gorm:"foreignKey:BrandID"`
+	Count  int    `json:"count" gorm:"not null"`
+	Image  string `json:"image" gorm:"not null"`
+}
+
+func (DrinkModel) TableName() string {
+	return "drinks"
 }

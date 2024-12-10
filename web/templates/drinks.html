@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добро пожаловать в наш Бар</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ffafbd, #ffc3a0);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        header {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .order-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            background: #e63946;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .order-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Стили для контейнера с напитками */
+        .drink-container {
+            display: flex;
+            overflow-x: auto;  /* Горизонтальная прокрутка */
+            gap: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            justify-content: start;
+            align-items: center;
+        }
+
+        .drink-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .drink-container::-webkit-scrollbar-thumb {
+            background: #e63946;
+            border-radius: 10px;
+        }
+
+        .drink-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .drink {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex: 0 0 auto;  /* Чтобы элементы не растягивались */
+            width: 220px;
+            color: #333;
+        }
+
+        .drink:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .drink-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .drink-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .drink-count {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .order-button-drink {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #e63946;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .order-button-drink:hover {
+            background-color: #d0334a;
+        }
+
+        .warning {
+            color: #f8d7da;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>Добро пожаловать в наш Бар</header>
+<p>Расслабьтесь, насладитесь атмосферой и выберите свой идеальный напиток</p>
+
+<div id="drinkList" class="drink-container"></div>
+
+<script>
+    async function fetchDrinks() {
+        try {
+            const response = await fetch("http://localhost:8080/api/drinks");
+            const data = await response.json();
+            renderDrinks(data.drinks);
+        } catch (error) {
+            console.error("Error fetching drinks:", error);
+        }
+    }
+
+    function renderDrinks(drinks) {
+        const drinkList = document.getElementById("drinkList");
+        drinkList.innerHTML = "";  // Очистить контейнер перед рендером
+
+        drinks.forEach(drink => {
+            const drinkDiv = document.createElement("div");
+            drinkDiv.className = "drink";
+
+            const img = document.createElement("img");
+            img.src = "/images/" + drink.image;  // Путь к изображению
+            img.alt = drink.title_d;
+            img.className = "drink-image";
+
+            const title = document.createElement("div");
+            title.className = "drink-title";
+            title.textContent = `${drink.title_d} (${drink.type})`;
+
+            const count = document.createElement("div");
+            count.className = "drink-count";
+            count.textContent = `Осталось: ${drink.count}`;
+
+            const button = document.createElement("button");
+            button.className = "order-button-drink";
+            button.textContent = "Заказать";
+            button.disabled = true;
+
+            // Enable button only if user has access token
+            const token = document.cookie.match(/accessToken=([^;]+)/);
+            if (token) {
+                button.disabled = false;
+                button.addEventListener("click", () => {
+                    alert(`Вы заказали: ${drink.title_d}`);
+                });
+            } else {
+                const warning = document.createElement("div");
+                warning.className = "warning";
+                warning.textContent = "Пожалуйста, войдите в систему, чтобы сделать заказ.";
+                drinkDiv.appendChild(warning);
+            }
+
+            drinkDiv.appendChild(img);
+            drinkDiv.appendChild(title);
+            drinkDiv.appendChild(count);
+            drinkDiv.appendChild(button);
+            drinkList.appendChild(drinkDiv);
+        });
+    }
+
+    // Fetch drinks on page load
+    fetchDrinks();
+</script>
+
+</body>
+</html>

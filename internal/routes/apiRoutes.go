@@ -6,6 +6,6 @@ import (
 )
 
 func BarRoute(router *gin.Engine) {
-	router.POST("/drink", conrollers.CreateDrink())
+	router.POST("/drink", conrollers.CreateDrink)
 	router.GET("/api/drinks", conrollers.GetDrink())
 }

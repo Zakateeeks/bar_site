@@ -9,14 +9,15 @@ import (
 
 func init() {
 	initial.LoadEnvVar()
+	configs.ConnectToDb()
+	initial.SyncDatabase()
 }
 
 func main() {
 	router := gin.Default()
 
-	configs.ConnectToDb()
-
-	router.LoadHTMLGlob("../../templates/*")
+	router.Static("/images", "../../web/image")
+	router.LoadHTMLGlob("../../web/templates/*")
 	routes.BarRoute(router)
 	routes.RegisterWebRoutes(router)
 	router.Run(":8080")
