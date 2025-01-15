@@ -181,7 +181,7 @@
             const token = Cookies.get("access_token");
             if (token) {
                 button.disabled = false;
-                button.addEventListener("click", () => orderDrink(drink.id));
+                button.addEventListener("click", () => orderDrink(drink.ID));
             } else {
                 const warning = document.createElement("div");
                 warning.className = "warning";
@@ -204,6 +204,8 @@
             alert("Пожалуйста, войдите в систему, чтобы сделать заказ.");
             return;
         }
+        console.log("ID напитка, отправляемый на сервер:", drinkId); // Отладочный вывод
+
 
         try {
             const response = await fetch("http://localhost:8080/api/order", {
@@ -213,7 +215,7 @@
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    drinkId: drinkId
+                    drink_id: drinkId
                 })
             });
 

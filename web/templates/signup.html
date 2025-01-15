@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Авторизация</title>
     <style>
         body {
             margin: 0;
@@ -37,7 +37,7 @@
             font-size: 1em;
             box-sizing: border-box;
         }
-        .register-button {
+        .button {
             width: 100%;
             padding: 10px;
             font-size: 1em;
@@ -49,33 +49,67 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .register-button:hover {
+        .button:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        a.back-link {
+        a.toggle-link {
             margin-top: 15px;
             display: inline-block;
             color: #e63946;
             text-decoration: none;
             font-size: 0.9em;
         }
-        a.back-link:hover {
+        a.toggle-link:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
+
 <div class="form-container">
-    <h2>Регистрация</h2>
+    <h2 id="formTitle">Регистрация</h2>
+
+    <!-- Форма для регистрации -->
     <form id="signupForm">
         <input type="email" id="email" placeholder="Введите email" required>
         <input type="password" id="password" placeholder="Введите пароль" required>
-        <button type="submit" class="register-button">Зарегистрироваться</button>
+        <button type="submit" class="button">Зарегистрироваться</button>
     </form>
-    <a href="/" class="back-link">Вернуться на главную</a>
+
+    <!-- Форма для входа -->
+    <form id="loginForm" style="display: none;">
+        <input type="email" id="loginEmail" placeholder="Введите email" required>
+        <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+        <button type="submit" class="button">Войти</button>
+    </form>
+
+    <!-- Ссылка для переключения между формами -->
+    <a href="#" id="toggleLink" class="toggle-link" onclick="toggleForm()">Уже есть аккаунт? Войти</a>
 </div>
+
 <script>
+    function toggleForm() {
+        const formTitle = document.getElementById("formTitle");
+        const signupForm = document.getElementById("signupForm");
+        const loginForm = document.getElementById("loginForm");
+        const toggleLink = document.getElementById("toggleLink");
+
+        // Переключаем видимость форм
+        if (signupForm.style.display === "none") {
+            signupForm.style.display = "block";
+            loginForm.style.display = "none";
+            formTitle.textContent = "Регистрация";
+            toggleLink.textContent = "Уже есть аккаунт? Войти";
+        } else {
+            signupForm.style.display = "none";
+            loginForm.style.display = "block";
+            formTitle.textContent = "Вход";
+            toggleLink.textContent = "Нет аккаунта? Зарегистрироваться";
+        }
+    }
+
+    // Обработчик регистрации
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value;
@@ -102,6 +136,35 @@
             alert("Произошла ошибка при регистрации");
         }
     });
+
+    // Обработчик входа
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+            const response = await fetch("http://localhost:8080/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (response.ok) {
+                alert("Вход успешен!");
+                window.location.href = "/";
+            } else {
+                const errorData = await response.json();
+                alert(`Ошибка: ${errorData.error}`);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Произошла ошибка при входе");
+        }
+    });
 </script>
+
 </body>
 </html>

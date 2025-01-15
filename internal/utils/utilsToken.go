@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"os"
 	"time"
 )
@@ -24,7 +25,7 @@ func GenerateRefreshToken() (string, error) {
 func CreateJWTToken(userID uint, clientIP string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
-		"exp": time.Now().Add(time.Hour * 24 * 365 * 10).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 		"ip":  clientIP,
 	})
 
@@ -59,4 +60,13 @@ func ValidateJWTToken(tokenString string) (*jwt.Token, error) {
 	}
 
 	return nil, errors.New("invalid token")
+}
+
+func CheckPasswordHash(password, hash string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+		log.Println("Password does not match")
+		return err
+	}
+	return nil
 }

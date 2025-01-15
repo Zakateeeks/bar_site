@@ -15,7 +15,6 @@ func init() {
 
 func main() {
 	router := gin.Default()
-
 	router.Static("/images", "../../web/image")
 	router.LoadHTMLGlob("../../web/templates/*")
 	routes.BarRoute(router)

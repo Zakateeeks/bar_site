@@ -43,7 +43,7 @@ func UpdateDrink(c *gin.Context) {
 		return
 	}
 	var drink models.DrinkModel
-	if err := configs.DB.First(&drink, requestBody.DrinkId).Error; err != nil {
+	if err := configs.DB.Where("id = ?", requestBody.DrinkId).First(&drink).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Drink not found"})
 		return
 	}
